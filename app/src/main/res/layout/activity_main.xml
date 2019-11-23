@@ -100,7 +100,7 @@
         android:layout_marginBottom="14dp"
         android:gravity="center"
         android:textColor="#eee"
-        android:text="Created by Amsavarthan\nIdea by Dinesh and Bharath"
+        android:text="Created by Amsavarthan"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 
