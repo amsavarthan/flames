@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Flames</string>
+
+    <string name="app_id">ca-app-pub-9303426545367298~5834779790</string>
+    <string name="banner_id1">ca-app-pub-9303426545367298/3630771367</string>
+    <string name="interstitial_id1">ca-app-pub-9303426545367298/8691526353</string>
+
+    <string name="test_banner_id">ca-app-pub-3940256099942544/6300978111</string>
+    <string name="test_interstitial_id">ca-app-pub-3940256099942544/1033173712</string>
 </resources>

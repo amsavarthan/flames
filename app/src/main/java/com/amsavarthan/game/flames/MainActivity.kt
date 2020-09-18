@@ -5,8 +5,10 @@ import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityOptionsCompat
+import com.google.android.gms.ads.*
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import java.util.*
@@ -16,10 +18,17 @@ class MainActivity : AppCompatActivity() {
     var input2: TextInputEditText? = null
     lateinit var name1: CharArray
     lateinit var name2: CharArray
+    lateinit var mAdView: AdView
     var output: MutableList<Char> = ArrayList()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        MobileAds.initialize(this){}
+        mAdView = findViewById(R.id.adView)
+        val adRequest = AdRequest.Builder().build()
+        mAdView.loadAd(adRequest)
+
         input1 = findViewById(R.id.input1)
         input2 = findViewById(R.id.input2)
     }

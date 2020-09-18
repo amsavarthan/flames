@@ -10,34 +10,52 @@ import android.os.Bundle
 import android.os.Handler
 import android.text.Html
 import android.util.DisplayMetrics
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.FileProvider
+import com.google.android.gms.ads.AdListener
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.InterstitialAd
+import com.google.android.gms.ads.MobileAds
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.util.*
 
 class ResultActivity : AppCompatActivity() {
+
     lateinit var textView: TextView
     lateinit var textView1: TextView
     lateinit var image: ImageView
     lateinit var constraintLayout: ConstraintLayout
+    private lateinit var interstitialAdView:InterstitialAd
+    private var rand = 0
+
     private var girlName: String? = null
     private var boyName: String? = null
     private var result: String?=null
+
     var friends = arrayOf("%s has found a new friend and her name is %s", "%s & %s are good friends", "%s & %s are going to be friends")
     var love = arrayOf("%s and %s have found love of their life", "%s & %s are going to be true lovers", "%s & %s are going to be cute couples")
     var affection = arrayOf("No more Tinder, It's a perfect match! for %s & %s", "%s is affectionate towards %s", "We have got affection! for %s and %s")
     var marriage = arrayOf("Maybe it's time for %s and %s to get ready for their wedding", "%s & %s are going to get married soon", "%s & %s are going to get married soon or already married")
     var enemy = arrayOf("Oops...%s and %s are enemies", "%s and %s may be enemies in future", "%s and %s both are enemies")
     var sister = arrayOf("%s has found a new sister and her name is %s", "It's a brother-sister relationship for %s & %s", "%s has got a cute sister and her name is %s")
-    private var rand = 0
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if(interstitialAdView.isLoaded){
+            interstitialAdView.show()
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_result)
@@ -48,6 +66,20 @@ class ResultActivity : AppCompatActivity() {
         textView1 = findViewById(R.id.subtitle)
         image = findViewById(R.id.image)
         constraintLayout = findViewById(R.id.main)
+
+        MobileAds.initialize(this){}
+        interstitialAdView= InterstitialAd(this)
+        interstitialAdView.adUnitId=getString(R.string.interstitial_id1)
+        interstitialAdView.loadAd(AdRequest.Builder().build())
+
+        interstitialAdView.adListener = object: AdListener() {
+
+            override fun onAdClosed() {
+                interstitialAdView.loadAd(AdRequest.Builder().build())
+                performShare()
+            }
+        }
+
         val r = Random()
         rand = r.nextInt(3)
         when (result) {
@@ -104,7 +136,19 @@ class ResultActivity : AppCompatActivity() {
     }
 
     fun onShareClicked(view: View?) {
-        val progressDialog = ProgressDialog(this)
+
+        if (interstitialAdView.isLoaded) {
+            interstitialAdView.show()
+        } else {
+            performShare()
+            Log.d("TAG", "The interstitial wasn't loaded yet.")
+        }
+
+    }
+
+    private fun performShare() {
+
+        val progressDialog = ProgressDialog(this@ResultActivity)
         progressDialog.setMessage("Generating share image...")
         progressDialog.isIndeterminate = true
         progressDialog.setCancelable(false)
@@ -163,6 +207,7 @@ class ResultActivity : AppCompatActivity() {
         }
         progressDialog.dismiss()
         shareImage(getSharableBitmapFromView(customview))
+
     }
 
     private fun shareImage(bitmap: Bitmap) {
